@@ -1,0 +1,8 @@
+The Food Review & Recipe Lookup App is a web-based application designed to help users search for recipes online and interact with them in a meaningful way. The app allows users to look up recipes by keyword, view detailed information such as ingredients and cooking instructions, and explore new meal ideas. All recipe data is pulled from an online public API, which allows the app to display real-time recipe information without storing data in a database.
+
+In addition to searching for recipes, the application allows users to save their favorite recipes for later viewing. Favorites are stored directly in the user’s browser using local storage, which means the data stays available even after refreshing the page or reopening the browser. This feature helps users keep track of recipes they enjoy or want to try again in the future.
+
+The app also includes a review system where users can leave ratings and comments on individual recipes. Each review includes a name, a numerical rating, and a written comment. Reviews are saved locally and displayed under the recipe they belong to, and the application calculates an average rating based on all submitted reviews. Users can also delete reviews if needed, giving them full control over their feedback.
+
+To improve usability and presentation, the application includes filtering and sorting options such as category and cuisine type, as well as a random recipe feature for users who want inspiration. A light and dark mode toggle is included to enhance accessibility and user comfort. The application also allows users to export reviews into a CSV file, which demonstrates basic data handling and file generation in a web environment.
+
