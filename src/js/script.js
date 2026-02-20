@@ -30,3 +30,4 @@ function getIngredients(meal) {
     // Return the full cleaned ingredient list
     return list;
 }
+
