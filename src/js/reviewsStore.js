@@ -7,3 +7,12 @@ export function getReviewMap() {
         return {};
     }
 }
+
+export function getReviewsList() {
+    return Object.values(getReviewMap()).sort((a,b) => b.timestamp - a.timestamp);
+}
+
+export function getReviewById(id) {
+    const reviews = getReviewMap();
+    return reviews[String(id)] || null;
+}
