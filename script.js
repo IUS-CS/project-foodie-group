@@ -14,6 +14,54 @@ const randomBtn = document.getElementById("randomBtn");
 
 let navStack = [];
 
+// ===== Favorites (localStorage) =====
+const FAVORITES_KEY = "foodie_favorites_v1";
+
+function loadFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(favs) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+}
+
+function isFavorited(idMeal) {
+  return loadFavorites().some(f => String(f.idMeal) === String(idMeal));
+}
+
+function addFavorite(meal) {
+  const favs = loadFavorites();
+  const exists = favs.some(f => String(f.idMeal) === String(meal.idMeal));
+  if (!exists) {
+    favs.push(meal);
+    saveFavorites(favs);
+  }
+}
+
+function removeFavorite(idMeal) {
+  const favs = loadFavorites().filter(f => String(f.idMeal) !== String(idMeal));
+  saveFavorites(favs);
+}
+
+function toggleFavorite(meal) {
+  if (isFavorited(meal.idMeal)) {
+    removeFavorite(meal.idMeal);
+    return false;
+  } else {
+    addFavorite(meal);
+    return true;
+  }
+}
+
+function setFavBtnState(btn, saved) {
+  btn.textContent = saved ? "Saved" : "Save";
+  btn.classList.toggle("saved", saved);
+}
+
 function showToast(msg) {
   toast.textContent = msg;
   toast.classList.remove("hidden");
