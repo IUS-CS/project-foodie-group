@@ -157,4 +157,7 @@ button.ghost{
   gap:14px;
 }
 @media (min-width:820px){
-  .detailsHeader
+  .detailsHeader{
+    grid-template-columns: 1fr;
+  }
+}
