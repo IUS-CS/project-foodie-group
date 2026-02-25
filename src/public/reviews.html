@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Reviews – Foodie</title>
+  <link rel="stylesheet" href="/src/public/css/reviews.css">
+  <link rel="stylesheet" href="/src/public/css/styles.css">
+</head>
+<body>
+
+  <div id="content">
+    <header class="reviews-header">
+      <h1>My Reviews</h1>
+      <a href="index.html" class="back-link">← Back to Search</a>
+    </header>
+
+    <!-- Review Form -->
+    <section class="review-form-section">
+      <h2>Write a Review</h2>
+      <form id="review-form" novalidate>
+
+        <div class="form-group">
+          <label for="recipe-title">Recipe Name</label>
+          <input type="text" id="recipe-title" placeholder="e.g. Spaghetti Carbonara" required>
+        </div>
+
+        <div class="form-group">
+          <span class="field-label">Star Rating</span>
+          <div class="star-rating" id="star-rating" role="group" aria-label="Star rating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <input type="hidden" id="rating-value" value="0">
+        </div>
+
+        <div class="form-group">
+          <label for="review-text">Your Review</label>
+          <textarea id="review-text" rows="4" placeholder="What did you think?"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Review</button>
+        <p class="form-error" id="form-error" hidden>Please enter a recipe name and select a rating.</p>
+      </form>
+    </section>
+
+    <!-- Past Reviews -->
+    <section class="past-reviews-section">
+      <h2>Past Reviews</h2>
+      <div id="reviews-list">
+        <p class="empty-state">No reviews yet. Be the first to write one!</p>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="../js/reviews.js"></script>
+</body>
+</html> 
