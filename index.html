@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Foodie Group — Recipe Search</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap headerWrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🍽️</div>
+        <div class="brandText">
+          <h1>Project Foodie Group</h1>
+          <p class="sub">Recipe Search Section — browse recipes using TheMealDB API.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="row">
+          <input type="text" id="searchInput"
+            placeholder="Search recipes (ex: chicken, pasta, tacos)..."
+            autocomplete="off" />
+          <button id="searchBtn">Search</button>
+          <button id="randomBtn" class="alt">Random</button>
+        </div>
+
+        <div class="row filters">
+          <select id="categorySelect">
+            <option value="">All Categories</option>
+          </select>
+
+          <select id="areaSelect">
+            <option value="">All Areas</option>
+          </select>
+
+          <select id="sortSelect">
+            <option value="az">Sort: A → Z</option>
+            <option value="za">Sort: Z → A</option>
+          </select>
+
+          <button id="favoritesBtn" class="alt">
+            Favorites <span id="favCount" class="badge">0</span>
+          </button>
+
+          <button id="themeBtn" class="alt">🌙</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="toast" class="toast hidden"></div>
+
+    <section id="toolbar" class="toolbar hidden">
+      <button id="backBtn" class="ghost">← Back</button>
+      <span id="contextTitle" class="contextTitle"></span>
+    </section>
+
+    <section id="content" class="content"></section>
+  </main>
+
+  <footer class="footer">
+    <span>Data: TheMealDB</span>
+    <span>•</span>
+    <span>Project Foodie Group</span>
+    <span>•</span>
+    <span>Recipe Search — Heidi Ganim</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
