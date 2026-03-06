@@ -57,7 +57,6 @@ function toggleFavorite(meal) {
 }
 
 
-
 // ===============================
 // INGREDIENT PARSER
 // Dominiq Marica
@@ -169,7 +168,45 @@ function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
 }
 
 
+// ===============================
+// Temporary Test Recipe Loader
+// ===============================
 
+async function loadRecipes() {
+
+    const response = await fetch(
+        "https://www.themealdb.com/api/json/v1/1/search.php?s=chicken"
+    );
+
+    const data = await response.json();
+
+    const meals = data.meals;
+
+    const container = document.getElementById("content");
+
+    container.innerHTML = `
+        <h1>Recipes</h1>
+
+        ${meals.map(meal => `
+            <div class="recipe-card">
+
+                <h3>${meal.strMeal}</h3>
+
+                <img src="${meal.strMealThumb}" width="200">
+
+                <br>
+
+                <button onclick="showRecipeDetails('${meal.idMeal}')">
+                    View
+                </button>
+
+            </div>
+        `).join("")}
+    `;
+}
+
+// Run it when the page loads
+loadRecipes();
 // ===============================
 // MAKE FUNCTION GLOBAL
 // ===============================
