@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>My Reviews – Foodie</title>
-  <link rel="stylesheet" href="/src/public/css/reviews.css">
-  <link rel="stylesheet" href="/src/public/css/styles.css">
+  <link rel="stylesheet" href="css/reviews.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -14,6 +14,8 @@
       <a href="index.html" class="back-link">← Back to Search</a>
     </header>
 
+    <p id="current-recipe" class="current-recipe"></p>
+
     <!-- Review Form -->
     <section class="review-form-section">
       <h2>Write a Review</h2>
@@ -22,6 +24,11 @@
         <div class="form-group">
           <label for="recipe-title">Recipe Name</label>
           <input type="text" id="recipe-title" placeholder="e.g. Spaghetti Carbonara" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewer-name">Your Name</label>
+          <input type="text" id="reviewer-name" placeholder="e.g. Brayton" required>
         </div>
 
         <div class="form-group">
@@ -42,13 +49,14 @@
         </div>
 
         <button type="submit" class="submit-btn">Submit Review</button>
-        <p class="form-error" id="form-error" hidden>Please enter a recipe name and select a rating.</p>
+        <p class="form-error" id="form-error" hidden>Please enter a recipe name, your name, and a rating.</p>
       </form>
     </section>
 
     <!-- Past Reviews -->
     <section class="past-reviews-section">
       <h2>Past Reviews</h2>
+      <p id="average-rating" class="average-rating">Average rating: N/A</p>
       <div id="reviews-list">
         <p class="empty-state">No reviews yet. Be the first to write one!</p>
       </div>
