@@ -12,17 +12,23 @@ export function getReviewsList() {
   return Object.values(getReviewsMap()).sort((a, b) => b.timestamp - a.timestamp);
 }
 
+export function getReviewsForRecipe(recipeId) {
+  return getReviewsList().filter((review) => String(review.recipeId) === String(recipeId));
+}
+
 export function getReviewById(id) {
   const reviews = getReviewsMap();
   return reviews[String(id)] || null;
 }
 
 export function saveReview(review) {
-  if (!review.id || !review.rating) return false;
+  if (!review.id || !review.rating || !review.recipeId) return false;
   const reviews = getReviewsMap();
   reviews[String(review.id)] = {
     id: String(review.id),
+    recipeId: String(review.recipeId),
     title: review.title || "Untitled Recipe",
+    reviewerName: review.reviewerName || "Anonymous",
     image: review.image || "",
     rating: Number(review.rating),
     text: review.text || "",
@@ -36,6 +42,13 @@ export function deleteReview(id) {
   const reviews = getReviewsMap();
   delete reviews[String(id)];
   localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
+}
+
+export function getAverageRating(recipeId) {
+  const reviews = getReviewsForRecipe(recipeId);
+  if (reviews.length === 0) return 0;
+  const total = reviews.reduce((sum, review) => sum + Number(review.rating), 0);
+  return total / reviews.length;
 }
 
 export function hasReview(id) {
