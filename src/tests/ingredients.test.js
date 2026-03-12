@@ -27,5 +27,3 @@ function runIngredientTests() {
 
   assertEqual(result.length, 2, "getIngredients extracts correct count");
 }
-
-runIngredientTests();

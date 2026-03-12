@@ -44,5 +44,3 @@ function runFavoritesTests() {
   assertEqual(favs.length, 1, "toggleFavorite adds meal");
 
 }
-
-runFavoritesTests();

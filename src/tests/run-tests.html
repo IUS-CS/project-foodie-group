@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project Foodie Tests</title>
+</head>
+<body>
+  <h1>Project Foodie Test Runner</h1>
+  <p>Open the browser console to see PASS/FAIL results.</p>
+
+  <div id="content"></div>
+
+  <!-- Main app scripts -->
+  <script src="../js/script.js"></script>
+  <script type="module"  src="../js/favoritesStore.js"></script>
+  <script type="module"  src="../js/reviewsStore.js"></script>
+  <script type="module"  src="../js/reviews.js"></script>
+
+  <!-- Test files -->
+  <script src="../tests/favorites.test.js"></script>
+  <script src="../tests/ingredients.test.js"></script>
+  <script src="../tests/reviews.test.js"></script>
+  <script src="../tests/search.test.js"></script>
+
+  <script>
+    window.addEventListener("load", () => {
+      if (typeof runFavoritesTests === "function") runFavoritesTests();
+      if (typeof runIngredientTests === "function") runIngredientTests();
+      if (typeof runReviewsTests === "function") runReviewsTests();
+      if (typeof runSearchTests === "function") runSearchTests();
+    });
+  </script>
+</body>
+</html>

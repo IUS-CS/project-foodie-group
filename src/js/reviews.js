@@ -20,21 +20,28 @@ const recipeTitleInput = document.getElementById("recipe-title");
 const reviewerNameInput = document.getElementById("reviewer-name");
 const currentRecipe = document.getElementById("current-recipe");
 const averageRating = document.getElementById("average-rating");
+const form = document.getElementById("review-form");
+const formError = document.getElementById("form-error");
+const reviewsList = document.getElementById("reviews-list");
 
-if (recipeContext.title) {
+if (recipeContext.title && recipeTitleInput) {
   recipeTitleInput.value = recipeContext.title;
 }
 
-currentRecipe.textContent = recipeContext.title
-  ? `Reviewing: ${recipeContext.title}`
-  : "No recipe selected. Open reviews from a recipe details page.";
+if (currentRecipe) {
+  currentRecipe.textContent = recipeContext.title
+    ? `Reviewing: ${recipeContext.title}`
+    : "No recipe selected. Open reviews from a recipe details page.";
+}
 
 stars.forEach((star) => {
   star.addEventListener("mouseenter", () => highlightStars(Number(star.dataset.value)));
   star.addEventListener("mouseleave", () => highlightStars(selectedRating));
   star.addEventListener("click", () => {
     selectedRating = Number(star.dataset.value);
-    ratingInput.value = selectedRating;
+    if (ratingInput) {
+      ratingInput.value = selectedRating;
+    }
     highlightStars(selectedRating);
   });
 });
@@ -48,59 +55,60 @@ function highlightStars(count) {
 
 // ---- Form Submission ----
 
-const form = document.getElementById("review-form");
-const formError = document.getElementById("form-error");
+if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+    const title = recipeTitleInput.value.trim();
+    const reviewerName = reviewerNameInput.value.trim();
+    const rating = Number(ratingInput.value);
+    const text = document.getElementById("review-text")?.value.trim() || "";
+    const recipeId = recipeContext.recipeId || title.toLowerCase().replace(/\s+/g, "_");
 
-  const title = recipeTitleInput.value.trim();
-  const reviewerName = reviewerNameInput.value.trim();
-  const rating = Number(ratingInput.value);
-  const text = document.getElementById("review-text").value.trim();
-  const recipeId = recipeContext.recipeId || title.toLowerCase().replace(/\s+/g, "_");
+    if (!title || !reviewerName || rating === 0) {
+      formError.hidden = false;
+      return;
+    }
 
-  if (!title || !reviewerName || rating === 0) {
-    formError.hidden = false;
-    return;
-  }
+    formError.hidden = true;
 
-  formError.hidden = true;
+    saveReview({
+      id: Date.now(),
+      recipeId,
+      title,
+      reviewerName,
+      image: recipeContext.image,
+      rating,
+      text,
+      timestamp: Date.now()
+    });
 
-  saveReview({
-    id: Date.now(),
-    recipeId,
-    title,
-    reviewerName,
-    image: recipeContext.image,
-    rating,
-    text,
-    timestamp: Date.now()
+    form.reset();
+    recipeTitleInput.value = title;
+    selectedRating = 0;
+    ratingInput.value = 0;
+    highlightStars(0);
+
+    renderReviews();
   });
-
-  // Reset form
-  form.reset();
-  recipeTitleInput.value = title;
-  selectedRating = 0;
-  ratingInput.value = 0;
-  highlightStars(0);
-
-  renderReviews();
-});
+}
 
 // ---- Render Past Reviews ----
 
 function renderReviews() {
   const list = recipeContext.recipeId ? getReviewsForRecipe(recipeContext.recipeId) : [];
-  const container = document.getElementById("reviews-list");
   const avg = recipeContext.recipeId ? getAverageRating(recipeContext.recipeId) : 0;
+
+  if (!reviewsList || !averageRating) {
+    return;
+  }
 
   averageRating.textContent = list.length
     ? `Average rating: ${avg.toFixed(1)} / 5 (${list.length} review${list.length === 1 ? "" : "s"})`
     : "Average rating: N/A";
 
   if (list.length === 0) {
-    container.innerHTML = recipeContext.recipeId
+    reviewsList.innerHTML = recipeContext.recipeId
       ? `<p class="empty-state">No reviews yet for this recipe. Be the first to write one!</p>`
       : `<p class="empty-state">Open this page from a recipe details view to see that recipe's reviews.</p>`;
     return;
@@ -113,7 +121,7 @@ function renderReviews() {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 
-  container.innerHTML = list.map((review) => `
+  reviewsList.innerHTML = list.map((review) => `
     <div class="review-card" data-id="${review.id}">
       ${review.image ? `<img src="${escapeHtml(review.image)}" alt="${escapeHtml(review.title)}">` : ""}
       <div class="review-body">
@@ -130,12 +138,14 @@ function renderReviews() {
 
 // ---- Delete via delegation ----
 
-document.getElementById("reviews-list").addEventListener("click", (e) => {
-  const btn = e.target.closest(".delete-btn");
-  if (!btn) return;
-  deleteReview(btn.dataset.id);
-  renderReviews();
-});
+if (reviewsList) {
+  reviewsList.addEventListener("click", (e) => {
+    const btn = e.target.closest(".delete-btn");
+    if (!btn) return;
+    deleteReview(btn.dataset.id);
+    renderReviews();
+  });
+}
 
 // ---- Init ----
 renderReviews();
