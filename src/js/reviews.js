@@ -23,6 +23,15 @@ const averageRating = document.getElementById("average-rating");
 const form = document.getElementById("review-form");
 const formError = document.getElementById("form-error");
 const reviewsList = document.getElementById("reviews-list");
+const backToSearchLink = document.getElementById("back-to-search");
+
+if (backToSearchLink && recipeContext.recipeId) {
+  backToSearchLink.href = `../public/index.html?${new URLSearchParams({
+    recipeId: recipeContext.recipeId,
+    title: recipeContext.title,
+    image: recipeContext.image
+  }).toString()}`;
+}
 
 if (recipeContext.title && recipeTitleInput) {
   recipeTitleInput.value = recipeContext.title;

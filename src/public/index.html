@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Review & Recipe Lookup</title>
   <link rel="stylesheet" href="../public/css/styles.css" />
+  <script src="../js/theme.js" defer></script>
   <script type="module" src="../js/script.js" ></script>
 </head>
 <body>
@@ -30,10 +31,6 @@
           <button id="randomBtn" class="alt">Random</button>
         </div>
 
-        <div class="row">
-          <a href="../public/reviews.html" class="smallBtn alt">Review Page</a>
-        </div>
-
         <div class="row filters">
           <select id="categorySelect">
             <option value="">All Categories</option>
@@ -51,6 +48,8 @@
           <button id="favoritesBtn" class="alt">
             Favorites <span id="favCount" class="badge">0</span>
           </button>
+
+          <button type="button" class="themeToggle" data-theme-toggle>🌙</button>
         </div>
       </div>
     </div>

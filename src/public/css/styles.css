@@ -33,6 +33,7 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .wrap {
@@ -139,6 +140,26 @@ button.alt:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.themeToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  min-width: 64px;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.themeToggle:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
 button.ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -176,6 +197,7 @@ button.ghost {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .muted,
@@ -195,6 +217,7 @@ button.ghost {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .cardBody {
@@ -238,12 +261,18 @@ button.ghost {
 }
 
 .smallBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 12px;
   border-radius: 999px;
   font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
   background: var(--btn);
   color: var(--btnText);
   border: 0;
+  text-decoration: none;
 }
 
 .smallBtn.alt {

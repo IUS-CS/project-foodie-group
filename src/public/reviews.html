@@ -2,65 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Reviews – Foodie</title>
   <link rel="stylesheet" href="../public/css/reviews.css">
   <link rel="stylesheet" href="../public/css/styles.css">
+  <script src="../js/theme.js" defer></script>
 </head>
 <body>
-
-  <div id="content">
-    <header class="reviews-header">
-      <h1>My Reviews</h1>
-      <a href="../public/index.html" class="back-link">← Back to Search</a>
-    </header>
-
-    <p id="current-recipe" class="current-recipe"></p>
-
-    <!-- Review Form -->
-    <section class="review-form-section">
-      <h2>Write a Review</h2>
-      <form id="review-form" novalidate>
-
-        <div class="form-group">
-          <label for="recipe-title">Recipe Name</label>
-          <input type="text" id="recipe-title" placeholder="e.g. Spaghetti Carbonara" required>
-        </div>
-
-        <div class="form-group">
-          <label for="reviewer-name">Your Name</label>
-          <input type="text" id="reviewer-name" placeholder="e.g. Brayton" required>
-        </div>
-
-        <div class="form-group">
-          <span class="field-label">Star Rating</span>
-          <div class="star-rating" id="star-rating" role="group" aria-label="Star rating">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
+  <div class="reviews-shell">
+    <main id="content" class="reviews-page">
+      <section class="reviews-hero">
+        <header class="reviews-header">
+          <div class="hero-copy">
+            <p class="eyebrow">Taste Notes</p>
+            <h1>My Reviews</h1>
+            <p class="hero-subtitle">Capture what hit, what missed, and what deserves another round.</p>
           </div>
-          <input type="hidden" id="rating-value" value="0">
+          <div class="reviews-actions">
+            <button type="button" class="themeToggle" data-theme-toggle>🌙</button>
+            <a href="../public/index.html" id="back-to-search" class="back-link">← Back to Search</a>
+          </div>
+        </header>
+
+        <div class="hero-panel">
+          <p id="current-recipe" class="current-recipe"></p>
+          <p class="hero-note">Write quick reactions for a single recipe or keep a running archive of favorites you want to remember.</p>
         </div>
+      </section>
 
-        <div class="form-group">
-          <label for="review-text">Your Review</label>
-          <textarea id="review-text" rows="4" placeholder="What did you think?"></textarea>
-        </div>
+      <div class="reviews-layout">
+        <section class="review-form-section">
+          <div class="section-heading">
+            <p class="section-kicker">New Entry</p>
+            <h2>Write a Review</h2>
+          </div>
 
-        <button type="submit" class="submit-btn">Submit Review</button>
-        <p class="form-error" id="form-error" hidden>Please enter a recipe name, your name, and a rating.</p>
-      </form>
-    </section>
+          <form id="review-form" novalidate>
+            <div class="form-group">
+              <label for="recipe-title">Recipe Name</label>
+              <input type="text" id="recipe-title" placeholder="e.g. Spaghetti Carbonara" required>
+            </div>
 
-    <!-- Past Reviews -->
-    <section class="past-reviews-section">
-      <h2>Past Reviews</h2>
-      <p id="average-rating" class="average-rating">Average rating: N/A</p>
-      <div id="reviews-list">
-        <p class="empty-state">No reviews yet. Be the first to write one!</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reviewer-name">Your Name</label>
+                <input type="text" id="reviewer-name" placeholder="e.g. Brayton" required>
+              </div>
+
+              <div class="form-group rating-group">
+                <span class="field-label">Star Rating</span>
+                <div class="star-rating" id="star-rating" role="group" aria-label="Star rating">
+                  <span class="star" data-value="1">★</span>
+                  <span class="star" data-value="2">★</span>
+                  <span class="star" data-value="3">★</span>
+                  <span class="star" data-value="4">★</span>
+                  <span class="star" data-value="5">★</span>
+                </div>
+                <input type="hidden" id="rating-value" value="0">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="review-text">Your Review</label>
+              <textarea id="review-text" rows="6" placeholder="What did you think? Texture, flavor, ease, would you make it again?"></textarea>
+            </div>
+
+            <div class="form-footer">
+              <button type="submit" class="submit-btn">Submit Review</button>
+              <p class="form-hint">Short and honest works better than perfect.</p>
+            </div>
+            <p class="form-error" id="form-error" hidden>Please enter a recipe name, your name, and a rating.</p>
+          </form>
+        </section>
+
+        <section class="past-reviews-section">
+          <div class="section-heading">
+            <p class="section-kicker">Archive</p>
+            <h2>Past Reviews</h2>
+          </div>
+          <p id="average-rating" class="average-rating">Average rating: N/A</p>
+          <div id="reviews-list">
+            <p class="empty-state">No reviews yet. Be the first to write one!</p>
+          </div>
+        </section>
       </div>
-    </section>
+    </main>
   </div>
 
   <script type="module" src="../js/reviews.js"></script>
