@@ -1,16 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Review & Recipe Lookup</title>
-  <link rel="stylesheet" href="./src/public/css/styles.css">
+  <link rel="stylesheet" href="../public/css/styles.css" />
+  <script type="module" src="../js/script.js" ></script>
 </head>
-
 <body>
-  <div id="content">
-    <h1>Recipe Search</h1>
-  </div>
+  <header class="topbar">
+    <div class="wrap headerWrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🍽️</div>
+        <div class="brandText">
+          <h1>Project Foodie Group</h1>
+          <p class="sub">Recipe Search Section — browse recipes using TheMealDB API.</p>
+        </div>
+      </div>
 
-  <script src="./src/js/script.js"></script>
+      <div class="controls">
+        <div class="row">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search recipes (ex: chicken, pasta, tacos)..."
+            autocomplete="off"
+          />
+          <button id="searchBtn">Search</button>
+          <button id="randomBtn" class="alt">Random</button>
+        </div>
+
+        <div class="row">
+          <a href="../public/reviews.html" class="smallBtn alt">Review Page</a>
+        </div>
+
+        <div class="row filters">
+          <select id="categorySelect">
+            <option value="">All Categories</option>
+          </select>
+
+          <select id="areaSelect">
+            <option value="">All Areas</option>
+          </select>
+
+          <select id="sortSelect">
+            <option value="az">Sort: A → Z</option>
+            <option value="za">Sort: Z → A</option>
+          </select>
+
+          <button id="favoritesBtn" class="alt">
+            Favorites <span id="favCount" class="badge">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="toast" class="toast hidden"></div>
+
+    <section id="toolbar" class="toolbar hidden">
+      <button id="backBtn" class="ghost">← Back</button>
+      <span id="contextTitle" class="contextTitle"></span>
+    </section>
+
+    <section id="content" class="content">
+      <div class="section">
+        <h2>Recipe Search</h2>
+        <p class="muted">Use the search bar above to find recipes.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Data: TheMealDB</span>
+    <span>•</span>
+    <span>Project Foodie Group</span>
+    <span>•</span>
+    <span>Recipe Search</span>
+  </footer>
+
 </body>
 </html>
