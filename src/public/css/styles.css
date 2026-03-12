@@ -261,12 +261,18 @@ button.ghost {
 }
 
 .smallBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 12px;
   border-radius: 999px;
   font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
   background: var(--btn);
   color: var(--btnText);
   border: 0;
+  text-decoration: none;
 }
 
 .smallBtn.alt {
@@ -277,10 +283,6 @@ button.ghost {
 
 .smallBtn.alt:hover {
   background: var(--ghost);
-}
-
-a.smallBtn {
-  text-decoration: none;
 }
 
 .loading,

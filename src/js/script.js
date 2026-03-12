@@ -11,6 +11,9 @@ const toast = document.getElementById("toast");
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const randomBtn = document.getElementById("randomBtn");
+const favoritesBtn = document.getElementById("favoritesBtn");
+const favCount = document.getElementById("favCount");
+const pageParams = new URLSearchParams(window.location.search);
 
 let navStack = [];
 
@@ -30,6 +33,12 @@ function loadFavorites() {
 
 function saveFavorites(favs) {
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+  updateFavoritesCount();
+}
+
+function updateFavoritesCount() {
+  if (!favCount) return;
+  favCount.textContent = String(loadFavorites().length);
 }
 
 function isFavorited(idMeal) {
@@ -178,6 +187,27 @@ function renderHome() {
   navStack = [renderHome];
 }
 
+async function restoreRecipeFromParams() {
+  const recipeId = pageParams.get("recipeId");
+  if (!recipeId) return false;
+
+  const title = pageParams.get("title");
+  if (title && searchInput) {
+    searchInput.value = title;
+  }
+
+  navStack = [renderHome];
+  pushView(() => renderHome());
+  await showRecipeDetails(recipeId);
+
+  const cleanUrl = `${window.location.pathname}${window.location.hash}`;
+  window.history.replaceState({}, "", cleanUrl);
+  pageParams.delete("recipeId");
+  pageParams.delete("title");
+  pageParams.delete("image");
+  return true;
+}
+
 async function renderSearch(query) {
   setToolbar(true, `Search: "${query}"`);
   content.innerHTML = `<div class="loading">Searching recipes...</div>`;
@@ -206,16 +236,13 @@ async function renderSearch(query) {
               <h3 class="cardTitle">${m.strMeal}</h3>
 
               <div class="cardActions">
-                <button class="smallBtn" onclick="showRecipeDetails('${m.idMeal}')">
+                <button class="smallBtn recipe-view-btn" data-id="${m.idMeal}">
                   View
                 </button>
 
-                <button class="smallBtn"
-                  onclick="toggleFavoriteButton(this,{
-                    idMeal:'${m.idMeal}',
-                    strMeal:${JSON.stringify(m.strMeal)},
-                    strMealThumb:'${m.strMealThumb}'
-                  })">
+                <button
+                  class="smallBtn recipe-save-btn"
+                  data-id="${m.idMeal}">
                   ${isFavorited(m.idMeal) ? "Saved" : "Save"}
                 </button>
               </div>
@@ -224,6 +251,25 @@ async function renderSearch(query) {
         `).join("")}
       </div>
     `;
+
+    content.querySelectorAll(".recipe-view-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        showRecipeDetails(button.dataset.id);
+      });
+    });
+
+    content.querySelectorAll(".recipe-save-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const meal = meals.find((item) => String(item.idMeal) === button.dataset.id);
+        if (!meal) return;
+
+        toggleFavoriteButton(button, {
+          idMeal: meal.idMeal,
+          strMeal: meal.strMeal,
+          strMealThumb: meal.strMealThumb
+        });
+      });
+    });
   } catch (err) {
     content.innerHTML = `
       <div class="section">
@@ -318,14 +364,22 @@ async function showRecipeDetails(id) {
 
 function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
   const saved = isFavorited(idMeal);
+  const reviewUrl = `../public/reviews.html?${new URLSearchParams({
+    recipeId: String(idMeal),
+    title,
+    image
+  }).toString()}`;
 
   content.innerHTML = `
     <div class="recipe-details">
       <h2>${title}</h2>
 
-      <button class="smallBtn" id="saveBtn">
-        ${saved ? "Saved" : "Save"}
-      </button>
+      <div class="detailActions">
+        <button class="smallBtn" id="saveBtn">
+          ${saved ? "Saved" : "Save"}
+        </button>
+        <a class="smallBtn" href="${reviewUrl}">Review</a>
+      </div>
 
       <img src="${image}" alt="${title}" class="recipe-image"/>
 
@@ -374,6 +428,7 @@ window.showRecipeDetails = showRecipeDetails;
 
 if (searchBtn) searchBtn.addEventListener("click", onSearch);
 if (randomBtn) randomBtn.addEventListener("click", onRandom);
+if (favoritesBtn) favoritesBtn.addEventListener("click", openFavoritesView);
 if (searchInput) {
   searchInput.addEventListener("keydown", e => {
     if (e.key === "Enter") onSearch();
@@ -385,4 +440,10 @@ if (backBtn) backBtn.addEventListener("click", goBack);
 // Start App
 // ===============================
 
-renderHome();
+updateFavoritesCount();
+
+restoreRecipeFromParams().then((restored) => {
+  if (!restored) {
+    renderHome();
+  }
+});
