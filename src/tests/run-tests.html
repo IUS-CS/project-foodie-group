@@ -11,22 +11,24 @@
   <div id="content"></div>
 
   <!-- Main app scripts -->
-  <script src="../src/js/script.js"></script>
-  <script src="../src/js/favoritesStore.js"></script>
-  <script src="../src/js/reviewsStore.js"></script>
-  <script src="../src/js/reviews.js"></script>
+  <script src="../js/script.js"></script>
+  <script type="module"  src="../js/favoritesStore.js"></script>
+  <script type="module"  src="../js/reviewsStore.js"></script>
+  <script type="module"  src="../js/reviews.js"></script>
 
   <!-- Test files -->
-  <script src="./favorites.test.js"></script>
-  <script src="./ingredients.test.js"></script>
-  <script src="./reviews.test.js"></script>
-  <script src="./search.test.js"></script>
+  <script src="../tests/favorites.test.js"></script>
+  <script src="../tests/ingredients.test.js"></script>
+  <script src="../tests/reviews.test.js"></script>
+  <script src="../tests/search.test.js"></script>
 
   <script>
-    if (typeof runFavoritesTests === "function") runFavoritesTests();
-    if (typeof runIngredientsTests === "function") runIngredientsTests();
-    if (typeof runReviewsTests === "function") runReviewsTests();
-    if (typeof runSearchTests === "function") runSearchTests();
+    window.addEventListener("load", () => {
+      if (typeof runFavoritesTests === "function") runFavoritesTests();
+      if (typeof runIngredientTests === "function") runIngredientTests();
+      if (typeof runReviewsTests === "function") runReviewsTests();
+      if (typeof runSearchTests === "function") runSearchTests();
+    });
   </script>
 </body>
 </html>

@@ -54,3 +54,29 @@ export function getAverageRating(recipeId) {
 export function hasReview(id) {
   return Boolean(getReviewsMap()[String(id)]);
 }
+
+// Legacy browser-test helpers. These mirror the earlier array-based API.
+export function loadReviews() {
+  return getReviewsList();
+}
+
+export function saveReviews(reviews) {
+  localStorage.setItem(REVIEWS_KEY, JSON.stringify({}));
+  reviews.forEach((review, index) => {
+    saveReview({
+      id: review.id || index + 1,
+      recipeId: review.recipeId,
+      title: review.title || review.recipeTitle || "Untitled Recipe",
+      reviewerName: review.reviewerName || review.name || "Anonymous",
+      image: review.image || "",
+      rating: review.rating,
+      text: review.text || review.comment || "",
+      timestamp: review.timestamp || Date.now() + index
+    });
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.loadReviews = loadReviews;
+  window.saveReviews = saveReviews;
+}

@@ -20,7 +20,7 @@ function runReviewsTests() {
     { recipeId: "2001", name: "Seth", rating: 5, comment: "Great recipe" }
   ];
 
-  localStorage.removeItem("foodie_reviews");
+  localStorage.removeItem("foodie_reviews_v1");
 
   saveReviews(testReviews);
 
