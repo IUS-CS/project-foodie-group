@@ -105,7 +105,12 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
 // ---- Render Past Reviews ----
 
 function renderReviews() {
-  const list = recipeContext.recipeId ? getReviewsForRecipe(recipeContext.recipeId) : [];
+  const rawList = recipeContext.recipeId ? getReviewsForRecipe(recipeContext.recipeId) : [];
+
+  const sortSelect = document.getElementById("sort-reviews");
+  const sortType = sortSelect ? sortSelect.value : "newest";
+
+  const list = sortReviews(rawList, sortType);
   const avg = recipeContext.recipeId ? getAverageRating(recipeContext.recipeId) : 0;
 
   if (!reviewsList || !averageRating) {
@@ -152,6 +157,32 @@ if (reviewsList) {
     const btn = e.target.closest(".delete-btn");
     if (!btn) return;
     deleteReview(btn.dataset.id);
+    renderReviews();
+  });
+}
+
+function sortReviews(list, sortType) {
+  const sorted = [...list];
+
+  switch (sortType) {
+    case "oldest":
+      return sorted.sort((a, b) => a.timestamp - b.timestamp);
+
+    case "rating-high":
+      return sorted.sort((a, b) => b.rating - a.rating);
+
+    case "rating-low":
+      return sorted.sort((a, b) => a.rating - b.rating);
+
+    default: // newest
+      return sorted.sort((a, b) => b.timestamp - a.timestamp);
+  }
+}
+
+const sortSelect = document.getElementById("sort-reviews");
+
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
     renderReviews();
   });
 }

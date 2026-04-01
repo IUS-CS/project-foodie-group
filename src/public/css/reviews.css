@@ -448,3 +448,13 @@
 .reviews-scroll::-webkit-scrollbar-thumb:hover {
   background: #ff8a65;
 }
+
+.sort-select {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+}
