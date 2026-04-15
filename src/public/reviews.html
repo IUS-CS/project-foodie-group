@@ -51,12 +51,12 @@
 
               <div class="form-group rating-group">
                 <span class="field-label">Star Rating</span>
-                <div class="star-rating" id="star-rating" role="group" aria-label="Star rating">
-                  <span class="star" data-value="1">★</span>
-                  <span class="star" data-value="2">★</span>
-                  <span class="star" data-value="3">★</span>
-                  <span class="star" data-value="4">★</span>
-                  <span class="star" data-value="5">★</span>
+                <div class="star-rating" id="star-rating" role="radiogroup" aria-label="Star rating">
+                  <span class="star" role="radio" aria-label="1 star"  aria-checked="false" data-value="1">★</span>
+                  <span class="star" role="radio" aria-label="2 stars" aria-checked="false" data-value="2">★</span>
+                  <span class="star" role="radio" aria-label="3 stars" aria-checked="false" data-value="3">★</span>
+                  <span class="star" role="radio" aria-label="4 stars" aria-checked="false" data-value="4">★</span>
+                  <span class="star" role="radio" aria-label="5 stars" aria-checked="false" data-value="5">★</span>
                 </div>
                 <input type="hidden" id="rating-value" value="0">
               </div>
@@ -83,13 +83,21 @@
           </div>
           <p id="average-rating" class="average-rating">Average rating: N/A</p>
           <div class="reviews-controls">
+            <select id="filter-reviews" class="sort-select">
+              <option value="all">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4+ Stars</option>
+              <option value="3">3+ Stars</option>
+              <option value="2">2+ Stars</option>
+              <option value="1">1+ Stars</option>
+            </select>
             <select id="sort-reviews" class="sort-select">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="rating-high">Highest Rating</option>
-            <option value="rating-low">Lowest Rating</option>
-          </select>
-          <button type="button" id="export-csv" class="export-btn">Export CSV</button>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="rating-high">Highest Rating</option>
+              <option value="rating-low">Lowest Rating</option>
+            </select>
+            <button type="button" id="export-csv" class="export-btn">Export CSV</button>
           </div>
           <div class="reviews-scroll">
             <div id="reviews-list">

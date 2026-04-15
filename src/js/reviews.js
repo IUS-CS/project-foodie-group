@@ -49,15 +49,37 @@ if (currentRecipe) {
     : "No recipe selected. Open reviews from a recipe details page.";
 }
 
-stars.forEach((star) => {
+// Roving tabindex: only the first star (or selected star) is in the tab order
+stars.forEach((star, i) => star.setAttribute("tabindex", i === 0 ? "0" : "-1"));
+
+function setRating(value) {
+  selectedRating = value;
+  if (ratingInput) ratingInput.value = value;
+  highlightStars(value);
+  // Move tab stop to the selected star
+  stars.forEach((s, i) => s.setAttribute("tabindex", i === value - 1 ? "0" : "-1"));
+}
+
+function focusStar(index) {
+  stars.forEach((s, i) => s.setAttribute("tabindex", i === index ? "0" : "-1"));
+  stars[index].focus();
+}
+
+stars.forEach((star, index) => {
   star.addEventListener("mouseenter", () => highlightStars(Number(star.dataset.value)));
   star.addEventListener("mouseleave", () => highlightStars(selectedRating));
-  star.addEventListener("click", () => {
-    selectedRating = Number(star.dataset.value);
-    if (ratingInput) {
-      ratingInput.value = selectedRating;
+  star.addEventListener("click", () => setRating(Number(star.dataset.value)));
+  star.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setRating(Number(star.dataset.value));
+    } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      focusStar(Math.min(index + 1, stars.length - 1));
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      focusStar(Math.max(index - 1, 0));
     }
-    highlightStars(selectedRating);
   });
 });
 
@@ -65,6 +87,7 @@ function highlightStars(count) {
   stars.forEach((star) => {
     const val = Number(star.dataset.value);
     star.classList.toggle("active", val <= count);
+    star.setAttribute("aria-checked", val === count ? "true" : "false");
   });
 }
 
@@ -75,9 +98,7 @@ function enterEditMode(review) {
   recipeTitleInput.value = review.title;
   reviewerNameInput.value = review.reviewerName;
   document.getElementById("review-text").value = review.text || "";
-  selectedRating = review.rating;
-  ratingInput.value = review.rating;
-  highlightStars(review.rating);
+  setRating(review.rating);
   if (submitBtn) submitBtn.textContent = "Save Changes";
   if (cancelEditBtn) cancelEditBtn.hidden = false;
   if (formKicker) formKicker.textContent = "Editing";
@@ -92,6 +113,7 @@ function exitEditMode() {
   selectedRating = 0;
   if (ratingInput) ratingInput.value = 0;
   highlightStars(0);
+  stars.forEach((s, i) => s.setAttribute("tabindex", i === 0 ? "0" : "-1"));
   if (submitBtn) submitBtn.textContent = "Submit Review";
   if (cancelEditBtn) cancelEditBtn.hidden = true;
   if (formKicker) formKicker.textContent = "New Entry";
@@ -165,21 +187,31 @@ function renderReviews() {
   const sortSelect = document.getElementById("sort-reviews");
   const sortType = sortSelect ? sortSelect.value : "newest";
 
-  const list = sortReviews(rawList, sortType);
+  const filterSelect = document.getElementById("filter-reviews");
+  const filterMin = filterSelect && filterSelect.value !== "all" ? Number(filterSelect.value) : 0;
+  const filtered = filterMin > 0 ? rawList.filter((r) => r.rating >= filterMin) : rawList;
+
+  const list = sortReviews(filtered, sortType);
   const avg = recipeContext.recipeId ? getAverageRating(recipeContext.recipeId) : 0;
 
   if (!reviewsList || !averageRating) {
     return;
   }
 
-  averageRating.textContent = list.length
-    ? `Average rating: ${avg.toFixed(1)} / 5 (${list.length} review${list.length === 1 ? "" : "s"})`
-    : "Average rating: N/A";
+  if (rawList.length === 0) {
+    averageRating.textContent = "Average rating: N/A";
+  } else if (filterMin > 0) {
+    averageRating.textContent = `Showing ${list.length} of ${rawList.length} review${rawList.length === 1 ? "" : "s"} · Avg: ${avg.toFixed(1)} / 5`;
+  } else {
+    averageRating.textContent = `Average rating: ${avg.toFixed(1)} / 5 (${list.length} review${list.length === 1 ? "" : "s"})`;
+  }
 
   if (list.length === 0) {
-    reviewsList.innerHTML = recipeContext.recipeId
-      ? `<p class="empty-state">No reviews yet for this recipe. Be the first to write one!</p>`
-      : `<p class="empty-state">Open this page from a recipe details view to see that recipe's reviews.</p>`;
+    reviewsList.innerHTML = filterMin > 0
+      ? `<p class="empty-state">No ${filterMin}+ star reviews for this recipe.</p>`
+      : recipeContext.recipeId
+        ? `<p class="empty-state">No reviews yet for this recipe. Be the first to write one!</p>`
+        : `<p class="empty-state">Open this page from a recipe details view to see that recipe's reviews.</p>`;
     return;
   }
 
@@ -247,11 +279,14 @@ function sortReviews(list, sortType) {
 }
 
 const sortSelect = document.getElementById("sort-reviews");
+const filterSelect = document.getElementById("filter-reviews");
 
 if (sortSelect) {
-  sortSelect.addEventListener("change", () => {
-    renderReviews();
-  });
+  sortSelect.addEventListener("change", () => renderReviews());
+}
+
+if (filterSelect) {
+  filterSelect.addEventListener("change", () => renderReviews());
 }
 
 // ---- CSV Export ----
