@@ -76,7 +76,35 @@ export function saveReviews(reviews) {
   });
 }
 
+export function exportReviewsToCSV(recipeId) {
+  const reviews = recipeId ? getReviewsForRecipe(recipeId) : getReviewsList();
+
+  const escapeCSV = (value) => {
+    const str = String(value ?? "");
+    return str.includes(",") || str.includes('"') || str.includes("\n")
+      ? `"${str.replaceAll('"', '""')}"`
+      : str;
+  };
+
+  const headers = ["Recipe Name", "Reviewer Name", "Rating (out of 5)", "Review", "Date"];
+  const rows = reviews.map((r) => [
+    escapeCSV(r.title),
+    escapeCSV(r.reviewerName),
+    escapeCSV(r.rating),
+    escapeCSV(r.text),
+    escapeCSV(new Date(r.timestamp).toLocaleDateString())
+  ]);
+
+  return [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+}
+
 if (typeof window !== "undefined") {
   window.loadReviews = loadReviews;
   window.saveReviews = saveReviews;
+  window.deleteReview = deleteReview;
+  window.getReviewById = getReviewById;
+  window.getReviewsForRecipe = getReviewsForRecipe;
+  window.getAverageRating = getAverageRating;
+  window.hasReview = hasReview;
+  window.exportReviewsToCSV = exportReviewsToCSV;
 }

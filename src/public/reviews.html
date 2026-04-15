@@ -33,8 +33,8 @@
       <div class="reviews-layout">
         <section class="review-form-section">
           <div class="section-heading">
-            <p class="section-kicker">New Entry</p>
-            <h2>Write a Review</h2>
+            <p class="section-kicker" id="form-kicker">New Entry</p>
+            <h2 id="form-heading">Write a Review</h2>
           </div>
 
           <form id="review-form" novalidate>
@@ -69,6 +69,7 @@
 
             <div class="form-footer">
               <button type="submit" class="submit-btn">Submit Review</button>
+              <button type="button" id="cancel-edit" class="cancel-btn" hidden>Cancel</button>
               <p class="form-hint">Short and honest works better than perfect.</p>
             </div>
             <p class="form-error" id="form-error" hidden>Please enter a recipe name, your name, and a rating.</p>
@@ -81,12 +82,15 @@
             <h2>Past Reviews</h2>
           </div>
           <p id="average-rating" class="average-rating">Average rating: N/A</p>
-          <select id="sort-reviews" class="sort-select">
+          <div class="reviews-controls">
+            <select id="sort-reviews" class="sort-select">
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="rating-high">Highest Rating</option>
             <option value="rating-low">Lowest Rating</option>
           </select>
+          <button type="button" id="export-csv" class="export-btn">Export CSV</button>
+          </div>
           <div class="reviews-scroll">
             <div id="reviews-list">
               <p class="empty-state">No reviews yet. Be the first to write one!</p>
