@@ -389,6 +389,47 @@
   color: #c0392b;
 }
 
+.review-card .delete-btn.confirm-state {
+  width: auto;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(192, 57, 43, 0.1);
+  border-color: rgba(192, 57, 43, 0.4);
+  color: #c0392b;
+}
+
+.edited-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ghost) 80%, transparent);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  vertical-align: middle;
+}
+
+.char-counter {
+  margin: 4px 0 0;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.char-counter.near-limit {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.char-counter.at-limit {
+  color: #c0392b;
+  font-weight: 700;
+}
+
 .cancel-btn {
   min-height: 46px;
   padding: 0 1.4rem;

@@ -30,6 +30,21 @@ const submitBtn = document.querySelector(".submit-btn");
 const cancelEditBtn = document.getElementById("cancel-edit");
 const formKicker = document.getElementById("form-kicker");
 const formHeading = document.getElementById("form-heading");
+const reviewTextarea = document.getElementById("review-text");
+const charCounter = document.getElementById("char-counter");
+const CHAR_LIMIT = 500;
+
+function updateCharCounter() {
+  if (!reviewTextarea || !charCounter) return;
+  const count = reviewTextarea.value.length;
+  charCounter.textContent = `${count} / ${CHAR_LIMIT}`;
+  charCounter.classList.toggle("near-limit", count >= CHAR_LIMIT * 0.9 && count < CHAR_LIMIT);
+  charCounter.classList.toggle("at-limit", count >= CHAR_LIMIT);
+}
+
+if (reviewTextarea) {
+  reviewTextarea.addEventListener("input", updateCharCounter);
+}
 
 if (backToSearchLink && recipeContext.recipeId) {
   backToSearchLink.href = `../public/index.html?${new URLSearchParams({
@@ -97,8 +112,9 @@ function enterEditMode(review) {
   editingId = review.id;
   recipeTitleInput.value = review.title;
   reviewerNameInput.value = review.reviewerName;
-  document.getElementById("review-text").value = review.text || "";
+  if (reviewTextarea) reviewTextarea.value = review.text || "";
   setRating(review.rating);
+  updateCharCounter();
   if (submitBtn) submitBtn.textContent = "Save Changes";
   if (cancelEditBtn) cancelEditBtn.hidden = false;
   if (formKicker) formKicker.textContent = "Editing";
@@ -114,6 +130,7 @@ function exitEditMode() {
   if (ratingInput) ratingInput.value = 0;
   highlightStars(0);
   stars.forEach((s, i) => s.setAttribute("tabindex", i === 0 ? "0" : "-1"));
+  updateCharCounter();
   if (submitBtn) submitBtn.textContent = "Submit Review";
   if (cancelEditBtn) cancelEditBtn.hidden = true;
   if (formKicker) formKicker.textContent = "New Entry";
@@ -154,7 +171,8 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
         image: existing?.image || recipeContext.image,
         rating,
         text,
-        timestamp: existing?.timestamp || Date.now()
+        timestamp: existing?.timestamp || Date.now(),
+        editedAt: Date.now()
       });
       exitEditMode();
     } else {
@@ -173,6 +191,7 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
       selectedRating = 0;
       ratingInput.value = 0;
       highlightStars(0);
+      updateCharCounter();
     }
 
     renderReviews();
@@ -230,7 +249,10 @@ function renderReviews() {
         <div class="review-stars">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</div>
         <p class="review-byline">By ${escapeHtml(review.reviewerName || "Anonymous")}</p>
         ${review.text ? `<p class="review-text">${escapeHtml(review.text)}</p>` : ""}
-        <span class="review-date">${new Date(review.timestamp).toLocaleDateString()}</span>
+        <span class="review-date">
+          ${new Date(review.timestamp).toLocaleDateString()}
+          ${review.editedAt ? `<span class="edited-badge">edited</span>` : ""}
+        </span>
       </div>
       <div class="card-actions">
         <button class="edit-btn" data-id="${review.id}" aria-label="Edit review">✎</button>
@@ -246,9 +268,22 @@ if (reviewsList) {
   reviewsList.addEventListener("click", (e) => {
     const deleteBtn = e.target.closest(".delete-btn");
     if (deleteBtn) {
-      if (editingId === deleteBtn.dataset.id) exitEditMode();
-      deleteReview(deleteBtn.dataset.id);
-      renderReviews();
+      if (deleteBtn.dataset.confirm === "true") {
+        if (editingId === deleteBtn.dataset.id) exitEditMode();
+        deleteReview(deleteBtn.dataset.id);
+        renderReviews();
+      } else {
+        deleteBtn.dataset.confirm = "true";
+        deleteBtn.textContent = "Delete?";
+        deleteBtn.classList.add("confirm-state");
+        setTimeout(() => {
+          if (deleteBtn.isConnected && deleteBtn.dataset.confirm === "true") {
+            deleteBtn.dataset.confirm = "false";
+            deleteBtn.textContent = "✕";
+            deleteBtn.classList.remove("confirm-state");
+          }
+        }, 3000);
+      }
       return;
     }
 

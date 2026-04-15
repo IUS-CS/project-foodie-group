@@ -32,7 +32,8 @@ export function saveReview(review) {
     image: review.image || "",
     rating: Number(review.rating),
     text: review.text || "",
-    timestamp: review.timestamp || Date.now()
+    timestamp: review.timestamp || Date.now(),
+    editedAt: review.editedAt || null
   };
   localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
   return true;

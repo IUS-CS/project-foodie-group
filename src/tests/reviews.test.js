@@ -235,8 +235,44 @@ function runReviewsTests() {
   // ------------------------------------------------------------------
   console.log("-- edit does not duplicate --");
 
-  const afterEdit = getReviewsForRecipe("2001");
-  assertEqual(afterEdit.length, 2, "editing a review does not add an extra entry");
+  const afterEditList = getReviewsForRecipe("2001");
+  assertEqual(afterEditList.length, 2, "editing a review does not add an extra entry");
+
+  // ------------------------------------------------------------------
+  // 15. editedAt — set when editing, absent on new reviews
+  // ------------------------------------------------------------------
+  console.log("-- editedAt field --");
+  seed();
+
+  const fresh = getReviewById("r1");
+  assertEqual(fresh.editedAt, null, "new review has no editedAt");
+
+  saveReview({
+    id: fresh.id,
+    recipeId: fresh.recipeId,
+    title: fresh.title,
+    reviewerName: fresh.reviewerName,
+    image: fresh.image,
+    rating: fresh.rating,
+    text: "Updated text",
+    timestamp: fresh.timestamp,
+    editedAt: 9999
+  });
+
+  const afterEdit = getReviewById("r1");
+  assertEqual(afterEdit.editedAt, 9999, "editedAt is stored when provided");
+  assertEqual(afterEdit.timestamp, fresh.timestamp, "timestamp unchanged after edit");
+
+  // ------------------------------------------------------------------
+  // 16. editedAt — not set on a brand-new save
+  // ------------------------------------------------------------------
+  console.log("-- editedAt absent on new save --");
+  localStorage.removeItem("foodie_reviews_v1");
+  saveReviews([
+    { id: "new1", recipeId: "5001", title: "New", reviewerName: "Eve", rating: 3, text: "", timestamp: 1000 }
+  ]);
+  const brandNew = getReviewById("new1");
+  assertEqual(brandNew.editedAt, null, "editedAt is null on a brand-new review");
 
   console.log("=== Reviews Tests Complete ===");
 }
