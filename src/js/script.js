@@ -362,6 +362,20 @@ async function showRecipeDetails(id) {
   }
 }
 
+function getRecipeReviewSummary(recipeId) {
+  try {
+    const map = JSON.parse(localStorage.getItem("foodie_reviews_v1")) || {};
+    const reviews = Object.values(map).filter(
+      (r) => String(r.recipeId) === String(recipeId)
+    );
+    if (reviews.length === 0) return null;
+    const avg = reviews.reduce((sum, r) => sum + Number(r.rating), 0) / reviews.length;
+    return { count: reviews.length, avg };
+  } catch {
+    return null;
+  }
+}
+
 function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
   const saved = isFavorited(idMeal);
   const reviewUrl = `../public/reviews.html?${new URLSearchParams({
@@ -369,6 +383,11 @@ function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
     title,
     image
   }).toString()}`;
+
+  const summary = getRecipeReviewSummary(idMeal);
+  const reviewLabel = summary
+    ? `Reviews (${summary.avg.toFixed(1)}★ · ${summary.count})`
+    : "Write a Review";
 
   content.innerHTML = `
     <div class="recipe-details">
@@ -378,7 +397,7 @@ function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
         <button class="smallBtn" id="saveBtn">
           ${saved ? "Saved" : "Save"}
         </button>
-        <a class="smallBtn" href="${reviewUrl}">Review</a>
+        <a class="smallBtn" href="${reviewUrl}">${reviewLabel}</a>
       </div>
 
       <img src="${image}" alt="${title}" class="recipe-image"/>
