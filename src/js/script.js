@@ -13,9 +13,16 @@ const searchBtn = document.getElementById("searchBtn");
 const randomBtn = document.getElementById("randomBtn");
 const favoritesBtn = document.getElementById("favoritesBtn");
 const favCount = document.getElementById("favCount");
+
+const categorySelect = document.getElementById("categorySelect");
+const areaSelect = document.getElementById("areaSelect");
+const sortSelect = document.getElementById("sortSelect"); 
+
 const pageParams = new URLSearchParams(window.location.search);
 
 let navStack = [];
+
+let currentMeals = []; 
 
 // ===============================
 // Favorites Feature (Seth Payne)
@@ -216,6 +223,8 @@ async function renderSearch(query) {
     const data = await mealdbSearch(query);
     const meals = data.meals || [];
 
+    currentMeals = meals;
+
     if (meals.length === 0) {
       content.innerHTML = `
         <div class="section">
@@ -286,7 +295,7 @@ async function onSearch() {
   pushView(() => renderSearch(q));
   await renderSearch(q);
 }
-
+/*
 async function onRandom() {
   try {
     const data = await mealdbRandom();
@@ -297,6 +306,7 @@ async function onRandom() {
     showToast("Error loading random recipe.");
   }
 }
+*/
 
 // ===============================
 // Recipe Details Section
@@ -442,6 +452,127 @@ window.removeFavoriteFromPage = removeFavoriteFromPage;
 window.showRecipeDetails = showRecipeDetails;
 
 // ===============================
+// RANDOM (Heidi Ganim)
+// ===============================
+
+// updated random handling and click control
+// prevents rapid clicks and handles bad responses
+let randomLoading = false;
+
+async function onRandom() {
+  if (randomLoading) return;
+  randomLoading = true;
+
+  try {
+    const data = await mealdbRandom();
+
+    if (!data || !data.meals) {
+      showToast("No random recipe found.");
+      return;
+    }
+
+    const meal = data.meals[0];
+    await showRecipeDetails(meal.idMeal);
+
+  } catch {
+    showToast("Error loading random recipe.");
+  } finally {
+    randomLoading = false;
+  }
+}
+
+// ===============================
+// GRID RENDER (Heidi Ganim)
+// ===============================
+
+function renderMealGrid(meals) {
+  content.innerHTML = `
+    <div class="grid">
+      ${meals.map(m => `
+        <div class="card">
+          <img src="${m.strMealThumb}" class="thumb"/>
+          <h3>${m.strMeal}</h3>
+          <button class="view-btn" data-id="${m.idMeal}">View</button>
+          <button class="save-btn" data-id="${m.idMeal}">
+            ${isFavorited(m.idMeal) ? "Saved" : "Save"}
+          </button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  document.querySelectorAll(".view-btn").forEach(btn =>
+    btn.addEventListener("click", () => showRecipeDetails(btn.dataset.id))
+  );
+
+  document.querySelectorAll(".save-btn").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const meal = meals.find(m => m.idMeal === btn.dataset.id);
+      const saved = toggleFavorite(meal);
+      btn.textContent = saved ? "Saved" : "Save";
+    })
+  );
+}
+
+// ===============================
+// DROPDOWNS (Heidi Ganim)
+// ===============================
+
+async function loadCategories() {
+  const data = await fetchJson("https://www.themealdb.com/api/json/v1/1/list.php?c=list");
+  return data.meals || [];
+}
+
+async function loadAreas() {
+  const data = await fetchJson("https://www.themealdb.com/api/json/v1/1/list.php?a=list");
+  return data.meals || [];
+}
+
+async function initDropdowns() {
+  if (categorySelect) {
+    const categories = await loadCategories();
+    categorySelect.innerHTML = `<option value="">All Categories</option>` +
+      categories.map(c => `<option value="${c.strCategory}">${c.strCategory}</option>`).join("");
+  }
+
+  if (areaSelect) {
+    const areas = await loadAreas();
+    areaSelect.innerHTML = `<option value="">All Areas</option>` +
+      areas.map(a => `<option value="${a.strArea}">${a.strArea}</option>`).join("");
+  }
+}
+
+async function filterByCategory(category) {
+  if (!category) return;
+  const data = await fetchJson(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`);
+  currentMeals = data.meals || [];
+  renderMealGrid(currentMeals);
+}
+
+async function filterByArea(area) {
+  if (!area) return;
+  const data = await fetchJson(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${area}`);
+  currentMeals = data.meals || [];
+  renderMealGrid(currentMeals);
+}
+
+// ===============================
+// SORT (Heidi Ganim)
+// ===============================
+
+function sortCurrentMealsAZ(order = "az") {
+  if (!currentMeals.length) return;
+
+  currentMeals.sort((a, b) =>
+    order === "az"
+      ? a.strMeal.localeCompare(b.strMeal)
+      : b.strMeal.localeCompare(a.strMeal)
+  );
+
+  renderMealGrid(currentMeals);
+}
+
+// ===============================
 // Event Listeners
 // ===============================
 
@@ -456,6 +587,28 @@ if (searchInput) {
 if (backBtn) backBtn.addEventListener("click", goBack);
 
 // ===============================
+// Filter & Sort Controls (Heidi Ganim)
+// ===============================
+
+if (categorySelect) {
+  categorySelect.addEventListener("change", () => {
+    filterByCategory(categorySelect.value);
+  });
+}
+
+if (areaSelect) {
+  areaSelect.addEventListener("change", () => {
+    filterByArea(areaSelect.value);
+  });
+}
+
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
+    sortCurrentMealsAZ(sortSelect.value);
+  });
+}
+
+// ===============================
 // Start App
 // ===============================
 
@@ -466,3 +619,5 @@ restoreRecipeFromParams().then((restored) => {
     renderHome();
   }
 });
+
+initDropdowns();
