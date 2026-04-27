@@ -33,6 +33,10 @@ const formHeading = document.getElementById("form-heading");
 const reviewTextarea = document.getElementById("review-text");
 const charCounter = document.getElementById("char-counter");
 const CHAR_LIMIT = 500;
+const FILLED_STAR = "\u2605";
+const EMPTY_STAR = "\u2606";
+const EDIT_ICON = "\u270e";
+const DELETE_ICON = "\u2715";
 
 function updateCharCounter() {
   if (!reviewTextarea || !charCounter) return;
@@ -154,7 +158,7 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
     const text = document.getElementById("review-text")?.value.trim() || "";
     const recipeId = recipeContext.recipeId || title.toLowerCase().replace(/\s+/g, "_");
 
-    if (!title || !reviewerName || rating === 0) {
+    if (!title || !reviewerName || !Number.isInteger(rating) || rating < 1 || rating > 5) {
       formError.hidden = false;
       return;
     }
@@ -163,7 +167,7 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
 
     if (editingId) {
       const existing = getReviewById(editingId);
-      saveReview({
+      const saved = saveReview({
         id: editingId,
         recipeId: existing?.recipeId || recipeId,
         title,
@@ -174,9 +178,13 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
         timestamp: existing?.timestamp || Date.now(),
         editedAt: Date.now()
       });
+      if (!saved) {
+        formError.hidden = false;
+        return;
+      }
       exitEditMode();
     } else {
-      saveReview({
+      const saved = saveReview({
         id: Date.now(),
         recipeId,
         title,
@@ -186,6 +194,10 @@ if (form && recipeTitleInput && reviewerNameInput && ratingInput && formError) {
         text,
         timestamp: Date.now()
       });
+      if (!saved) {
+        formError.hidden = false;
+        return;
+      }
       form.reset();
       recipeTitleInput.value = title;
       selectedRating = 0;
@@ -220,7 +232,7 @@ function renderReviews() {
   if (rawList.length === 0) {
     averageRating.textContent = "Average rating: N/A";
   } else if (filterMin > 0) {
-    averageRating.textContent = `Showing ${list.length} of ${rawList.length} review${rawList.length === 1 ? "" : "s"} · Avg: ${avg.toFixed(1)} / 5`;
+    averageRating.textContent = `Showing ${list.length} of ${rawList.length} review${rawList.length === 1 ? "" : "s"} \u00b7 Avg: ${avg.toFixed(1)} / 5`;
   } else {
     averageRating.textContent = `Average rating: ${avg.toFixed(1)} / 5 (${list.length} review${list.length === 1 ? "" : "s"})`;
   }
@@ -242,11 +254,11 @@ function renderReviews() {
     .replaceAll("'", "&#39;");
 
   reviewsList.innerHTML = list.map((review) => `
-    <div class="review-card" data-id="${review.id}">
+    <div class="review-card" data-id="${escapeHtml(review.id)}">
       ${review.image ? `<img src="${escapeHtml(review.image)}" alt="${escapeHtml(review.title)}">` : ""}
       <div class="review-body">
         <p class="review-title">${escapeHtml(review.title)}</p>
-        <div class="review-stars">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</div>
+        <div class="review-stars">${FILLED_STAR.repeat(review.rating)}${EMPTY_STAR.repeat(5 - review.rating)}</div>
         <p class="review-byline">By ${escapeHtml(review.reviewerName || "Anonymous")}</p>
         ${review.text ? `<p class="review-text">${escapeHtml(review.text)}</p>` : ""}
         <span class="review-date">
@@ -255,8 +267,8 @@ function renderReviews() {
         </span>
       </div>
       <div class="card-actions">
-        <button class="edit-btn" data-id="${review.id}" aria-label="Edit review">✎</button>
-        <button class="delete-btn" data-id="${review.id}" aria-label="Delete review">✕</button>
+        <button class="edit-btn" data-id="${escapeHtml(review.id)}" aria-label="Edit review">${EDIT_ICON}</button>
+        <button class="delete-btn" data-id="${escapeHtml(review.id)}" aria-label="Delete review">${DELETE_ICON}</button>
       </div>
     </div>
   `).join("");
@@ -279,7 +291,7 @@ if (reviewsList) {
         setTimeout(() => {
           if (deleteBtn.isConnected && deleteBtn.dataset.confirm === "true") {
             deleteBtn.dataset.confirm = "false";
-            deleteBtn.textContent = "✕";
+            deleteBtn.textContent = DELETE_ICON;
             deleteBtn.classList.remove("confirm-state");
           }
         }, 3000);
