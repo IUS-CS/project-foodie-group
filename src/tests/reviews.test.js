@@ -30,7 +30,7 @@ function runReviewsTests() {
   console.log("=== Running Reviews Tests ===");
 
   const fns = [
-    "loadReviews", "saveReviews", "deleteReview",
+    "loadReviews", "saveReviews", "saveReview", "deleteReview", "getReviewById",
     "getReviewsForRecipe", "getAverageRating", "hasReview", "exportReviewsToCSV"
   ];
   const missing = fns.filter((fn) => typeof window[fn] !== "function");
@@ -127,6 +127,36 @@ function runReviewsTests() {
 
   assertTrue(hasReview("r1"), "hasReview returns true for existing review");
   assertFalse(hasReview("r999"), "hasReview returns false for missing review");
+
+  // ------------------------------------------------------------------
+  // 6b. saveReview validation
+  // ------------------------------------------------------------------
+  console.log("-- saveReview validation --");
+  localStorage.removeItem("foodie_reviews_v1");
+
+  assertFalse(saveReview({ id: "bad1", recipeId: "2001", rating: 0 }), "saveReview rejects rating 0");
+  assertFalse(saveReview({ id: "bad2", recipeId: "2001", rating: 6 }), "saveReview rejects rating above 5");
+  assertFalse(saveReview({ id: "bad3", recipeId: "2001", rating: "nope" }), "saveReview rejects non-numeric rating");
+  assertFalse(saveReview({ id: "bad4", recipeId: "", rating: 4 }), "saveReview rejects missing recipeId");
+  assertFalse(saveReview({ id: "", recipeId: "2001", rating: 4 }), "saveReview rejects missing id");
+  assertEqual(loadReviews().length, 0, "invalid reviews are not saved");
+
+  assertTrue(saveReview({
+    id: "trim1",
+    recipeId: " 2001 ",
+    title: " Pasta ",
+    reviewerName: " Alice ",
+    rating: "5",
+    text: " Delicious ",
+    timestamp: 1000
+  }), "saveReview accepts numeric string ratings");
+
+  const trimmed = getReviewById("trim1");
+  assertEqual(trimmed.recipeId, "2001", "saveReview trims recipeId");
+  assertEqual(trimmed.title, "Pasta", "saveReview trims title");
+  assertEqual(trimmed.reviewerName, "Alice", "saveReview trims reviewerName");
+  assertEqual(trimmed.text, "Delicious", "saveReview trims review text");
+  assertEqual(trimmed.rating, 5, "saveReview stores rating as a number");
 
   // ------------------------------------------------------------------
   // 7. exportReviewsToCSV — structure

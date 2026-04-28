@@ -16,13 +16,13 @@ const favCount = document.getElementById("favCount");
 
 const categorySelect = document.getElementById("categorySelect");
 const areaSelect = document.getElementById("areaSelect");
-const sortSelect = document.getElementById("sortSelect"); 
+const sortSelect = document.getElementById("sortSelect");
 
 const pageParams = new URLSearchParams(window.location.search);
 
 let navStack = [];
 
-let currentMeals = []; 
+let currentMeals = [];
 
 // ===============================
 // Favorites Feature (Seth Payne)
@@ -396,7 +396,7 @@ function renderRecipeDetails(idMeal, title, image, ingredients, instructions) {
 
   const summary = getRecipeReviewSummary(idMeal);
   const reviewLabel = summary
-    ? `Reviews (${summary.avg.toFixed(1)}★ · ${summary.count})`
+    ? `Reviews (${summary.avg.toFixed(1)}\u2605 \u00b7 ${summary.count})`
     : "Write a Review";
 
   content.innerHTML = `
