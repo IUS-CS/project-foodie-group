@@ -295,23 +295,6 @@ async function onSearch() {
   pushView(() => renderSearch(q));
   await renderSearch(q);
 }
-/*
-async function onRandom() {
-  try {
-    const data = await mealdbRandom();
-    const meal = data.meals[0];
-    pushView(() => renderSearch(meal.strMeal));
-    await renderSearch(meal.strMeal);
-  } catch (err) {
-    showToast("Error loading random recipe.");
-  }
-}
-*/
-
-// ===============================
-// Recipe Details Section
-// Dominiq Marica + Favorites Feature
-// ===============================
 
 function getIngredients(meal) {
   const list = [];
